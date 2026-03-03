@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "gofly.dev Blog"
+title: "mefly.dev Blog"
 ---
 
 <h2>Blog</h2>
