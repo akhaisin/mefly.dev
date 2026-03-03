@@ -1,4 +1,4 @@
-# gofly.dev
+# mefly.dev
 
 ## Local dev
 
