@@ -1,8 +1,8 @@
 # Minimal Jekyll config for personal blog
-title: "gofly.dev"
+title: "mefly.dev"
 description: "Personal blog of akhaisin"
 baseurl: ""
-url: "https://gofly.dev"
+url: "https://mefly.dev"
 theme: minima
 
 # Navigation menu
