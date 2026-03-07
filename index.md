@@ -12,3 +12,21 @@ title: "mefly.dev Blog"
     </li>
   {% endfor %}
 </ul>
+
+<h2>Articles</h2>
+<ul>
+  {% for article in site.articles %}
+    <li>
+      <a href="{{ article.url }}">{{ article.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
+
+<h2>Apps</h2>
+<ul>
+  {% for app in site.apps %}
+    <li>
+      <a href="{{ app.url }}">{{ app.title }}</a>
+    </li>
+  {% endfor %}
+</ul>

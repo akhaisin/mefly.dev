@@ -5,10 +5,23 @@ baseurl: ""
 url: "https://mefly.dev"
 theme: minima
 
+# Collections
+collections:
+  articles:
+    output: true
+    permalink: /articles/:slug/
+  apps:
+    output: true
+    permalink: /apps/:slug/
+
 # Navigation menu
 menu:
   - title: "Blog"
     url: "/"
+  - title: "Articles"
+    url: "/articles.html"
+  - title: "Apps"
+    url: "/apps.html"
   - title: "CV"
     url: "/cv.html"
   - title: "Contacts"
