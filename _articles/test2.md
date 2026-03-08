@@ -1,7 +1,6 @@
 ---
 layout: default
-title: Test1
+title: Test2
 ---
 
 Placeholder article content.
-

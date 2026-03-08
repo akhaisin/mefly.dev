@@ -8,39 +8,83 @@
   <link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
   <style>
     body { font-family: sans-serif; margin: 0; background: #fff; color: #222; }
-    .container { display: flex; min-height: 100vh; }
-    .sidebar {
-      width: 200px;
-      background: #f7f7f7;
-      padding: 2rem 1rem;
-      border-right: 1px solid #eee;
-      min-height: 100vh;
+    .topbar {
+      display: flex;
+      align-items: flex-end;
+      gap: 1.25rem;
+      padding: 0 1rem;
+      min-height: 4.25rem;
+      border-bottom: 1px solid #b1b4b6;
+      background: #fff;
     }
-    .sidebar h1 { font-size: 1.3rem; margin-bottom: 2rem; }
-    .sidebar ul { list-style: none; padding: 0; }
-    .sidebar li { margin-bottom: 1.2rem; }
-    .sidebar a { color: #222; text-decoration: none; font-weight: 500; }
-    .sidebar a.active, .sidebar a:hover { color: #007acc; }
-    .content { flex: 1; padding: 2rem; }
-    @media (max-width: 600px) {
-      .container { flex-direction: column; }
-      .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #eee; min-height: auto; }
+    .tabs-nav {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.35rem;
+      min-width: 0;
+      overflow-x: auto;
+      white-space: nowrap;
+      flex: 1;
+      padding-top: 0.85rem;
     }
+    .tab-link {
+      color: #0b0c0c;
+      text-decoration: none;
+      font-weight: 500;
+      line-height: 1.25;
+      padding: 0.6rem 1rem;
+      margin: 0;
+      border: 1px solid #b1b4b6;
+      border-bottom: 1px solid #b1b4b6;
+      border-radius: 0;
+      background: #f3f2f1;
+      position: relative;
+      top: 1px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .tab-link:hover {
+      color: #0b0c0c;
+      background: #e8e6e3;
+    }
+    .tab-link.active {
+      color: #0b0c0c;
+      border-color: #b1b4b6;
+      border-bottom: 0;
+      background: #fff;
+      font-weight: 700;
+      z-index: 1;
+      padding-bottom: calc(0.6rem + 1px);
+    }
+    .tab-link:focus-visible {
+      outline: 3px solid #ffdd00;
+      outline-offset: 0;
+    }
+    .tab-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      display: block;
+      flex-shrink: 0;
+    }
+    .content { padding: 2rem; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <nav class="sidebar">
-      <h1><a href="/">{{ site.title }}</a></h1>
-      <ul>
-        {% for item in site.menu %}
-          <li><a href="{{ item.url }}" {% if page.url == item.url %}class="active"{% endif %}>{{ item.title }}</a></li>
-        {% endfor %}
-      </ul>
+  <header class="topbar">
+    <nav class="tabs-nav" aria-label="Main navigation">
+      <a class="tab-link{% if page.url == '/' %} active{% endif %}" href="{{ '/' | relative_url }}">
+        <img class="tab-icon" src="{{ '/article.svg' | relative_url }}" alt="">
+        <span>Articles</span>
+      </a>
+      {% assign sorted_apps = site.apps | sort: 'title' %}
+      {% for app in sorted_apps %}
+        <a class="tab-link{% if page.url == app.url %} active{% endif %}" href="{{ app.url | relative_url }}">{{ app.title }}</a>
+      {% endfor %}
     </nav>
-    <main class="content">
-      {{ content }}
-    </main>
-  </div>
+  </header>
+  <main class="content">
+    {{ content }}
+  </main>
 </body>
 </html>

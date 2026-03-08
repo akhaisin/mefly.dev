@@ -1,6 +1,5 @@
-# Minimal Jekyll config for personal blog
 title: "mefly.dev"
-description: "Personal blog of akhaisin"
+description: ""
 baseurl: ""
 url: "https://mefly.dev"
 theme: minima
@@ -13,19 +12,6 @@ collections:
   apps:
     output: true
     permalink: /apps/:slug/
-
-# Navigation menu
-menu:
-  - title: "Blog"
-    url: "/"
-  - title: "Articles"
-    url: "/articles.html"
-  - title: "Apps"
-    url: "/apps.html"
-  - title: "CV"
-    url: "/cv.html"
-  - title: "Contacts"
-    url: "/contacts.html"
 
 # Build settings
 plugins:
