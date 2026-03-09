@@ -14,29 +14,31 @@ collections:
     permalink: /apps/:slug/
 
 tabs:
-  - id: articles
-    label: "Articles"
-    url: "/"
-    icon: "/article.svg"
-    css_class: "left"
-  - id: about
-    label: "About"
-    url: "/about/"
-    css_class: "left"
-  - id: apps
-    label: "Apps"
-    kind: label
-    css_class: "label"
-  - id: track-builder
-    label: "Track Builder"
-    group: apps
-    url: "/apps/track-builder/"
-    css_class: "right"
-  - id: csrf-tester
-    label: "CSRF Tester"
-    group: apps
-    url: "/apps/csrf-tester/"
-    css_class: "right"
+  left_group:
+    - id: articles
+      label: "Articles"
+      url: "/"
+      icon: "/article.svg"
+      css_class: "left"
+    - id: about
+      label: "About"
+      url: "/about/"
+      css_class: "left"
+  right_group:
+    - id: apps
+      label: "Apps"
+      kind: label
+      css_class: "label right"
+    - id: track-builder
+      label: "Track Builder"
+      group: apps
+      url: "/apps/track-builder/"
+      css_class: "right"
+    - id: csrf-tester
+      label: "CSRF Tester"
+      group: apps
+      url: "/apps/csrf-tester/"
+      css_class: "right"
 
 # Build settings
 plugins:

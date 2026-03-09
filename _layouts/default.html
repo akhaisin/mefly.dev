@@ -11,7 +11,8 @@
 <body>
   <header>
     <nav>
-        {% for item in site.tabs %}
+        <div class="left_group">
+          {% for item in site.tabs.left_group %}
             {% if item.kind == 'label' %}
               <span class="tab {% if item.css_class %} {{ item.css_class }}{% endif %}">
                 {{ item.label }}
@@ -26,8 +27,26 @@
                 <span>{{ item.label }}</span>
               </a>
             {% endif %}
-          
-        {% endfor %}
+          {% endfor %}
+        </div>
+        <div class="right_group">
+          {% for item in site.tabs.right_group %}
+            {% if item.kind == 'label' %}
+              <span class="tab {% if item.css_class %} {{ item.css_class }}{% endif %}">
+                {{ item.label }}
+              </span>
+            {% else %}
+              <a
+                class="tab {% if item.css_class %} {{ item.css_class }}{% endif %} {% if page.url == item.url %} selected{% endif %}"
+                href="{{ item.url | relative_url }}">
+                {% if item.icon %}
+                  <img src="{{ item.icon | relative_url }}" alt="">
+                {% endif %}
+                <span>{{ item.label }}</span>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
       
     </nav>
   </header>
