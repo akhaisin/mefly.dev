@@ -59,6 +59,10 @@
   cursor: default;
 }
 
+.mefly-tabs__tab--pseudo:hover {
+  background: white; /* same as normal pseudo background */
+}
+
 .mefly-tabs__tab-icon {
   width: 1.25rem;
   height: 1.25rem;
