@@ -1,0 +1,103 @@
+/* Tabs component inspired by GOV.UK Design System */
+
+.mefly-tabs {
+  margin-bottom: 0;
+}
+
+.mefly-tabs__list {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0 1rem;
+  list-style: none;
+  border-bottom: 1px solid #b1b4b6;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.mefly-tabs__list-item {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.mefly-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  margin: 0;
+  border: 1px solid #b1b4b6;
+  border-bottom: 1px solid #b1b4b6;
+  border-radius: 0;
+  background: #f3f2f1;
+  color: #0b0c0c;
+  text-decoration: none;
+  font-weight: 500;
+  line-height: 1.25;
+  position: relative;
+  top: 1px;
+}
+
+.mefly-tabs__tab--pseudo {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  margin: 0;
+  border: 1px solid #b1b4b6;
+  border-bottom: 1px solid #b1b4b6;
+  border-radius: 0;
+  background: #e8e6e3;
+  color: #0b0c0c;
+  font-weight: 700;
+  line-height: 1.25;
+  position: relative;
+  top: 1px;
+  cursor: default;
+}
+
+.mefly-tabs__tab--group {
+  background: #f7f6f5;
+}
+
+.mefly-tabs__tab--grouped {
+  background: #f7f6f5;
+}
+
+.mefly-tabs__tab--pseudo-group {
+  background: #e3e1df;
+}
+
+.mefly-tabs__tab:hover {
+  color: #0b0c0c;
+  background: #e8e6e3;
+}
+
+.mefly-tabs__tab:focus {
+  outline: 3px solid #ffdd00;
+  outline-offset: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.mefly-tabs__tab--selected {
+  border-color: #b1b4b6;
+  border-bottom: 0;
+  background: #fff;
+  color: #0b0c0c;
+  font-weight: 700;
+  padding-bottom: calc(0.6rem + 1px);
+  z-index: 1;
+}
+
+.mefly-tabs__tab-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: block;
+  flex-shrink: 0;
+}
+
+.mefly-tabs__panel {
+  padding: 2rem 1rem;
+}

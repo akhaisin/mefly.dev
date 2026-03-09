@@ -13,6 +13,33 @@ collections:
     output: true
     permalink: /apps/:slug/
 
+tabs:
+  - id: articles
+    label: "Articles"
+    kind: tab
+    url: "/"
+    icon: "/article.svg"
+  - id: about
+    label: "About"
+    kind: tab
+    url: "/about/"
+  - id: apps
+    label: "Apps"
+    kind: pseudo
+    css_class: "mefly-tabs__tab--pseudo-group"
+  - id: track-builder
+    label: "Track Builder"
+    kind: tab
+    group: apps
+    url: "/apps/track-builder/"
+    css_class: "mefly-tabs__tab--grouped"
+  - id: csrf-tester
+    label: "CSRF Tester"
+    kind: tab
+    group: apps
+    url: "/apps/csrf-tester/"
+    css_class: "mefly-tabs__tab--grouped"
+
 # Build settings
 plugins:
   - jekyll-feed
