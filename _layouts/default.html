@@ -6,37 +6,33 @@
   <title>{{ page.title }} | {{ site.title }}</title>
   <link rel="icon" type="image/svg+xml" href="{{ '/favicon.svg' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/tabs.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/tabs.css' | relative_url }}">
 </head>
 <body>
-  <header class="mefly-tabs">
-    <nav aria-label="Main navigation">
-      <ul class="mefly-tabs__list" role="tablist">
+  <header>
+    <nav>
         {% for item in site.tabs %}
-          <li class="mefly-tabs__list-item" role="presentation">
-            {% if item.kind == 'pseudo' %}
-              <span class="mefly-tabs__tab mefly-tabs__tab--pseudo{% if item.css_class %} {{ item.css_class }}{% endif %}">
+            {% if item.kind == 'label' %}
+              <span class="tab {% if item.css_class %} {{ item.css_class }}{% endif %}">
                 {{ item.label }}
               </span>
             {% else %}
               <a
-                class="mefly-tabs__tab{% if item.group %} mefly-tabs__tab--group{% endif %}{% if item.css_class %} {{ item.css_class }}{% endif %}{% if page.url == item.url %} mefly-tabs__tab--selected{% endif %}"
-                href="{{ item.url | relative_url }}"
-                role="tab"
-                aria-selected="{% if page.url == item.url %}true{% else %}false{% endif %}">
+                class="tab {% if item.css_class %} {{ item.css_class }}{% endif %} {% if page.url == item.url %} selected{% endif %}"
+                href="{{ item.url | relative_url }}">
                 {% if item.icon %}
-                  <img class="mefly-tabs__tab-icon" src="{{ item.icon | relative_url }}" alt="">
+                  <img src="{{ item.icon | relative_url }}" alt="">
                 {% endif %}
                 <span>{{ item.label }}</span>
               </a>
             {% endif %}
-          </li>
+          
         {% endfor %}
-      </ul>
+      
     </nav>
   </header>
 
-  <main class="mefly-tabs__panel" role="tabpanel">
+  <main class="main">
     {{ content }}
   </main>
 </body>

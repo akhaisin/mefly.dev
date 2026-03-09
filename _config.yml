@@ -16,29 +16,27 @@ collections:
 tabs:
   - id: articles
     label: "Articles"
-    kind: tab
     url: "/"
     icon: "/article.svg"
+    css_class: "left"
   - id: about
     label: "About"
-    kind: tab
     url: "/about/"
+    css_class: "left"
   - id: apps
     label: "Apps"
-    kind: pseudo
-    css_class: "mefly-tabs__tab--pseudo-group"
+    kind: label
+    css_class: "label"
   - id: track-builder
     label: "Track Builder"
-    kind: tab
     group: apps
     url: "/apps/track-builder/"
-    css_class: "mefly-tabs__tab--grouped"
+    css_class: "right"
   - id: csrf-tester
     label: "CSRF Tester"
-    kind: tab
     group: apps
     url: "/apps/csrf-tester/"
-    css_class: "mefly-tabs__tab--grouped"
+    css_class: "right"
 
 # Build settings
 plugins:
