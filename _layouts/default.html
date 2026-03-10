@@ -13,11 +13,6 @@
     <nav>
         <div class="left_group">
           {% for item in site.tabs.left_group %}
-            {% if item.kind == 'label' %}
-              <span class="tab {% if item.css_class %} {{ item.css_class }}{% endif %}">
-                {{ item.label }}
-              </span>
-            {% else %}
               <a
                 class="tab {% if item.css_class %} {{ item.css_class }}{% endif %} {% if page.url == item.url %} selected{% endif %}"
                 href="{{ item.url | relative_url }}">
@@ -26,16 +21,10 @@
                 {% endif %}
                 <span>{{ item.label }}</span>
               </a>
-            {% endif %}
           {% endfor %}
         </div>
         <div class="right_group">
           {% for item in site.tabs.right_group %}
-            {% if item.kind == 'label' %}
-              <span class="tab {% if item.css_class %} {{ item.css_class }}{% endif %}">
-                {{ item.label }}
-              </span>
-            {% else %}
               <a
                 class="tab {% if item.css_class %} {{ item.css_class }}{% endif %} {% if page.url == item.url %} selected{% endif %}"
                 href="{{ item.url | relative_url }}">
@@ -44,7 +33,6 @@
                 {% endif %}
                 <span>{{ item.label }}</span>
               </a>
-            {% endif %}
           {% endfor %}
         </div>
       

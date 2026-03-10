@@ -25,10 +25,6 @@ tabs:
       url: "/about/"
       css_class: "left"
   right_group:
-    - id: apps
-      label: "Apps"
-      kind: label
-      css_class: "label right"
     - id: track-builder
       label: "Track Builder"
       group: apps
