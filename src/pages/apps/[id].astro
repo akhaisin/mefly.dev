@@ -1,0 +1,58 @@
+---
+import { apps, resolveIframeSrc } from '../../apps';
+import type { App } from '../../apps';
+
+export function getStaticPaths() {
+  return apps.map((app) => ({
+    params: { id: app.id },
+    props: { app },
+  }));
+}
+
+interface Props {
+  app: App;
+}
+
+const { app } = Astro.props;
+const iframeSrc = resolveIframeSrc(app, import.meta.env.DEV);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{app.label} — mefly.dev</title>
+  </head>
+  <body>
+    {iframeSrc
+      ? <iframe src={iframeSrc} title={app.label} allowfullscreen></iframe>
+      : <p class="not-implemented">Not implemented yet</p>
+    }
+  </body>
+</html>
+
+<style>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .not-implemented {
+    color: #888;
+    font-family: system-ui, sans-serif;
+    font-size: 1rem;
+    margin: auto;
+  }
+</style>
