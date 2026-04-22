@@ -147,7 +147,7 @@ The embedded app is responsible for rendering a trigger + menu from this payload
 
 ## Milestone 5 — mefly-nav Package
 
-**Goal:** A small, self-contained React component package that renders the bottom-left corner navigation trigger and menu. Single source of truth used by both mefly.dev and all embedded apps.
+**Goal:** A small React package that owns all host-communication concerns for embedded apps: navigation menu and URL hash sync. Apps add one dependency and get both. Single source of truth shared between mefly.dev and all embedded apps.
 
 **Repo:** `github.com/akhaisin/mefly-nav` — standalone repo, installable without publishing to npm:
 ```
@@ -155,20 +155,36 @@ npm install github:akhaisin/mefly-nav
 ```
 Pin a specific release with: `github:akhaisin/mefly-nav#v1.0.0`
 
+---
+
+### URL sync
+
+`useHostSync` — the hook currently living in `learning-react/src/hooks/useHostSync.ts`. Moves to this package verbatim. Embedded apps call it once; it handles both directions:
+- Route changes → sends `HASH_CHANGED` to host
+- Receives `NAVIGATE_TO_HASH` from host → updates `window.location.hash`
+
+Must be called inside a React Router `<Router>` (uses `useLocation`).
+
+**Host side (mefly.dev):** The existing `UrlSync.astro` component stays in mefly.dev — it is Astro-specific and contains no logic worth sharing. Only the embedded-app side moves to the package.
+
+---
+
+### Navigation menu
+
 **Visual behaviour (inspired by react-tiny-fab):**
 - Small circular/rounded trigger button fixed at bottom-left.
-- On hover (desktop) or tap (mobile): vertical list of icon+label items fans/slides out above the trigger.
-- Items navigate to their URL (standard anchor, `target="_blank"` optional per item).
+- On hover (desktop) or tap (mobile): vertical list of icon+label items slides out above the trigger.
+- Items are standard anchors navigating to their mefly.dev URL.
 - Closes on outside click or Escape.
 - The current app's item is omitted or visually marked as active.
 
 **Component API:**
 ```tsx
-// Host mode — mefly.dev renders this directly
+// Host mode — mefly.dev renders this directly, passing items from src/apps.ts
 <MeflyNav items={items} activeId="track-builder" />
 
-// Delegate mode — embedded app renders this after receiving postMessage
-<MeflyNavReceiver />  // listens for MEFLY_MENU, renders <MeflyNav> when received
+// Delegate mode — embedded app; inert until MEFLY_MENU arrives via postMessage
+<MeflyNavReceiver />
 ```
 
 **Item shape:**
@@ -184,21 +200,21 @@ type MeflyNavItem = {
 **postMessage protocol (delegate mode):**
 ```ts
 // host → iframe, sent once after iframe 'load' event
-{
-  type: 'MEFLY_MENU',
-  activeId: string,
-  items: MeflyNavItem[]
-}
+{ type: 'MEFLY_MENU', activeId: string, items: MeflyNavItem[] }
 ```
-`MeflyNavReceiver` listens for this message, validates `event.origin` is a trusted mefly.dev origin, then renders `<MeflyNav>` with the received items.
+`MeflyNavReceiver` validates `event.origin` is a trusted mefly.dev origin, then renders `<MeflyNav>` with the received items.
 
-**Package structure:**
+---
+
+### Package structure
+
 ```
 mefly-nav/
   src/
+    useHostSync.ts       — URL hash sync hook (requires React Router)
     MeflyNav.tsx         — trigger + menu UI
-    MeflyNavReceiver.tsx — postMessage listener wrapper
-    types.ts             — MeflyNavItem type, exported
+    MeflyNavReceiver.tsx — postMessage listener; renders MeflyNav on MEFLY_MENU
+    types.ts             — MeflyNavItem, exported
     index.ts             — re-exports all public API
   package.json
   tsconfig.json
@@ -206,23 +222,22 @@ mefly-nav/
 ```
 
 **Build:**
-- Vite lib mode (`build.lib`), outputs `dist/index.js` (ESM) and `dist/index.cjs`.
+- Vite lib mode, outputs `dist/index.js` (ESM) and `dist/index.cjs`.
 - TypeScript declarations via `vite-plugin-dts`.
-- React and ReactDOM are `peerDependencies`, not bundled.
+- `react`, `react-dom`, and `react-router-dom` are `peerDependencies` — not bundled.
 
-**Styling:**
-- CSS modules, scoped to the component. No external CSS dependency.
-- Consumer can override the trigger position via a `position` prop (`'bottom-left'` default, `'bottom-right'` future).
+**Styling:** CSS modules, scoped to the component. No external CSS dependency.
 
-**Consuming in mefly.dev (M3 update):**
-- Replace the local `NavMenu.tsx` with `import { MeflyNav } from 'mefly-nav'`.
-- Host passes `items` from `src/apps.ts`, `activeId` from current route.
+---
 
-**Consuming in learning-react (out of scope for M5 — tracked separately):**
-- Add `MeflyNavReceiver` to the app root; it is inert until a `MEFLY_MENU` message arrives.
-- Position it to avoid conflict with the existing GitHub repo and help buttons (bottom-left corner is already occupied — receiver renders the trigger at a configurable offset or the embedded app repositions existing controls).
+### Migration from current implementations
 
-**Milestones dependency:** M5 can be developed in parallel with M3. M3 can start with a local `NavMenu.tsx` and migrate to `mefly-nav` once the package is ready.
+When M5 is ready:
+- **learning-react:** remove `src/hooks/useHostSync.ts`, install `mefly-nav`, update import. Add `<MeflyNavReceiver />` for delegate-mode menu.
+- **mefly.dev M2:** `UrlSync.astro` stays as-is (host side, Astro-specific).
+- **mefly.dev M3:** replace local `NavMenu.tsx` with `import { MeflyNav } from 'mefly-nav'`.
+
+**Milestones dependency:** M5 can be developed in parallel with M3. M3 starts with a local `NavMenu.tsx` and migrates once the package is ready.
 
 ---
 

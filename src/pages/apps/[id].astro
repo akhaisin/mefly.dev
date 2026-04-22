@@ -1,6 +1,7 @@
 ---
 import { apps, resolveIframeSrc } from '../../apps';
 import type { App } from '../../apps';
+import UrlSync from '../../components/UrlSync.astro';
 
 export function getStaticPaths() {
   return apps.map((app) => ({
@@ -27,9 +28,10 @@ const iframeSrc = resolveIframeSrc(app, import.meta.env.DEV);
   </head>
   <body>
     {iframeSrc
-      ? <iframe src={iframeSrc} title={app.label} allowfullscreen></iframe>
+      ? <iframe id="app-iframe" src={iframeSrc} title={app.label} allowfullscreen></iframe>
       : <p class="not-implemented">Not implemented yet</p>
     }
+    {iframeSrc && app.urlSync && <UrlSync />}
   </body>
 </html>
 

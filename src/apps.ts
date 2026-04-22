@@ -4,6 +4,7 @@ export interface App {
   iconUrl: string;
   iframeUrl?: string;
   iframeUrlLocal?: string;
+  urlSync?: boolean;
 }
 
 export function resolveIframeSrc(app: App, isDev: boolean): string | undefined {
@@ -24,6 +25,7 @@ export const apps: App[] = [
     iconUrl: 'https://akhaisin.github.io/fpv-track-builder/favicon.svg',
     // iframeUrl: 'https://akhaisin.github.io/fpv-track-builder/',
     iframeUrlLocal: 'http://localhost:5173/',
+    urlSync: true,
   },
   {
     id: 'csrf-tester',
@@ -37,7 +39,8 @@ export const apps: App[] = [
     label: 'Learning React',
     iconUrl: 'https://akhaisin.github.io/learning-react/favicon.svg',
     iframeUrl: 'https://akhaisin.github.io/learning-react/',
-    iframeUrlLocal: 'http://localhost:5174/',
+    iframeUrlLocal: 'http://localhost:5174/learning-react/',
+    urlSync: true,
   },
 ];
 
