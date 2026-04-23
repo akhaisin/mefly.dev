@@ -1,0 +1,76 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  articles: CollectionEntry<'articles'>[];
+}
+
+const { articles } = Astro.props;
+---
+
+<ul class="articles-list">
+  {articles.map((article) => (
+    <li>
+      <a href={`/articles/${article.slug}/`}>
+        <span class="title">{article.data.title}</span>
+        <time datetime={article.data.date.toISOString()}>
+          {article.data.date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
+        </time>
+      </a>
+      {article.data.description && <p>{article.data.description}</p>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .articles-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 1rem;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  time {
+    color: rgba(241, 241, 241, 0.7);
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  p {
+    margin: 0.5rem 0 0;
+    color: rgba(241, 241, 241, 0.8);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 720px) {
+    a {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+  }
+</style>

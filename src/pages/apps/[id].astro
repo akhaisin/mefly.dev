@@ -1,0 +1,20 @@
+---
+import { apps, isEmbeddableApp } from '../../apps';
+import type { App } from '../../apps';
+import AppEmbed from '../../layouts/AppEmbed.astro';
+
+export function getStaticPaths() {
+  return apps.filter(isEmbeddableApp).map((app) => ({
+    params: { id: app.id },
+    props: { app },
+  }));
+}
+
+interface Props {
+  app: App;
+}
+
+const { app } = Astro.props;
+---
+
+<AppEmbed app={app} />

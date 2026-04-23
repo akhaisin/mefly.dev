@@ -1,0 +1,68 @@
+<script>
+  const iframe = document.getElementById('app-iframe') as HTMLIFrameElement | null;
+  if (iframe) {
+    const iframeOrigin = (() => {
+      try {
+        return new URL(iframe.src, window.location.origin).origin;
+      } catch {
+        return null;
+      }
+    })();
+
+    if (iframeOrigin) {
+      let ready = false;
+      let lastPolledHash = '';
+
+      function sendToIframe(hash: string): void {
+        if (!ready) return;
+        iframe!.contentWindow?.postMessage(
+          { type: 'NAVIGATE_TO_HASH', hash: hash.replace(/^#/, ''), timestamp: Date.now() },
+          iframeOrigin!,
+        );
+      }
+
+      iframe.addEventListener('load', () => {
+        ready = true;
+        if (window.location.hash) sendToIframe(window.location.hash);
+      });
+
+      window.addEventListener('hashchange', () => sendToIframe(window.location.hash));
+
+      window.addEventListener('message', (event) => {
+        if (event.source !== iframe!.contentWindow) return;
+        if (event.origin !== iframeOrigin) return;
+        if (event.data?.type !== 'HASH_CHANGED') return;
+
+        const hash: string = event.data.hash ?? '';
+        const pathname: string = event.data.pathname ?? '';
+
+        if (hash) {
+          // Hash fragment navigation — mirror it to the host URL hash.
+          const next = hash.startsWith('#') ? hash : `#${hash}`;
+          if (window.location.hash !== next) window.location.hash = next;
+        } else if (pathname && pathname !== '/') {
+          // Pathname navigation (e.g. React Router) — store as #/pathname so
+          // the URL is shareable and the correct route is restored on reload.
+          const next = `#${pathname}`;
+          if (window.location.hash !== next) window.location.hash = next;
+        }
+      });
+
+      // Fallback polling for same-origin / local dev where postMessage is not fired.
+      setInterval(() => {
+        if (!ready) return;
+        try {
+          const iframeHash = iframe!.contentWindow!.location.hash;
+          if (iframeHash !== lastPolledHash) {
+            lastPolledHash = iframeHash;
+            if (iframeHash && window.location.hash !== iframeHash) {
+              window.location.hash = iframeHash;
+            }
+          }
+        } catch {
+          // Expected in cross-origin mode.
+        }
+      }, 200);
+    }
+  }
+</script>
