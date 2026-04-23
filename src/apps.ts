@@ -2,8 +2,10 @@ export interface App {
   id: string;
   label: string;
   iconUrl: string;
+  href?: string;
   iframeUrl?: string;
   iframeUrlLocal?: string;
+  devOnly?: boolean;
   urlSync?: boolean;
   menuMode?: 'host' | 'delegate';
 }
@@ -16,10 +18,34 @@ export function resolveIframeSrc(app: App, isDev: boolean): string | undefined {
 }
 
 export function isDevOnly(app: App): boolean {
+  if (typeof app.devOnly === 'boolean') {
+    return app.devOnly;
+  }
   return !app.iframeUrl && !!app.iframeUrlLocal;
 }
 
+export function resolveAppHref(app: App, isDev: boolean): string | undefined {
+  if (app.href) {
+    return !isDev && isDevOnly(app) ? undefined : app.href;
+  }
+
+  return resolveIframeSrc(app, isDev)
+    ? `/apps/${app.id}`
+    : undefined;
+}
+
+export function isEmbeddableApp(app: App): boolean {
+  return Boolean(app.iframeUrl || app.iframeUrlLocal);
+}
+
 export const apps: App[] = [
+  {
+    id: 'articles',
+    label: 'Articles',
+    iconUrl: 'https://mefly.dev/favicon.svg',
+    href: '/articles',
+    devOnly: true,
+  },
   {
     id: 'track-builder',
     label: 'Track Builder',
@@ -62,13 +88,17 @@ export function navItemsFor(currentId: string, isDev: boolean) {
     homeItem,
     ...apps
       .filter((a) => a.id !== currentId)
-      .map((a) => ({
-        id: a.id,
-        label: a.label,
-        iconUrl: a.iconUrl,
-        url: `/apps/${a.id}`,
-        disabled: isDev ? !a.iframeUrl && !a.iframeUrlLocal : !a.iframeUrl,
-        devOnly: !a.iframeUrl && !!a.iframeUrlLocal,
-      })),
+      .map((a) => {
+        const href = resolveAppHref(a, isDev);
+
+        return {
+          id: a.id,
+          label: a.label,
+          iconUrl: a.iconUrl,
+          url: href ?? '#',
+          disabled: !href,
+          devOnly: isDevOnly(a),
+        };
+      }),
   ];
 }

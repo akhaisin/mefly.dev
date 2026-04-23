@@ -1,0 +1,110 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection(
+    'articles',
+    ({ data }) => import.meta.env.DEV || !data.draft,
+  );
+
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+---
+
+<Base title={`${article.data.title} — mefly.dev`}>
+  <main>
+    <article class="prose">
+      <p class="meta">
+        <time datetime={article.data.date.toISOString()}>
+          {article.data.date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </time>
+      </p>
+      <h1>{article.data.title}</h1>
+      {article.data.description && <p class="description">{article.data.description}</p>}
+      <Content />
+    </article>
+  </main>
+</Base>
+
+<style>
+  main {
+    min-height: 100vh;
+    padding: 3rem 1.5rem 4rem;
+    background: #f7f3ea;
+    color: #1f1a14;
+  }
+
+  .prose {
+    max-width: 760px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    line-height: 1.75;
+  }
+
+  .meta {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #685742;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+  }
+
+  .description {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    color: #4d3f30;
+    font-style: italic;
+  }
+
+  .prose :global(p) {
+    margin: 1rem 0;
+  }
+
+  .prose :global(h2),
+  .prose :global(h3) {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .prose :global(code) {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: #ece2d0;
+    padding: 0.1em 0.3em;
+    border-radius: 0.25rem;
+  }
+
+  .prose :global(pre) {
+    background: #ece2d0;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+  }
+
+  .prose :global(a) {
+    color: #854d0e;
+  }
+
+  .prose :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
