@@ -74,102 +74,33 @@ Stack: **Astro** (static output) + **React** (islands where interactivity is nee
 
 ---
 
-## Milestone 3 — Overlay Navigation Menu
+## Milestone 3 — Overlay Navigation Menu & mefly-nav Package
 
-**Goal:** Zero persistent chrome. Navigation is accessible only via a small trigger button at the bottom-left corner (same visual pattern as the GitHub repo link in `learning-react/src/layout/AppLayout.tsx`). Activating it reveals a vertical icon bar matching the landing page icons.
-
-**Design: configurable per-app menu ownership**
-
-Two modes, selected per app via a `menuMode` field in `src/apps.ts`:
-
-| Mode | Value | Behaviour |
-|---|---|---|
-| **Host renders** | `'host'` | Host injects a fixed-position menu overlay on top of the iframe. Simple. May visually conflict with bottom-left controls already present in the embedded page. |
-| **Delegate to embedded page** | `'delegate'` | Host does NOT render a menu. After the iframe loads, host sends one postMessage with the full menu payload; the embedded app renders its own trigger and menu. |
-
-**Why this matters now:** `learning-react` already has a GitHub repo link and a help button at the bottom-left — exactly where the host menu trigger would land. `delegate` mode lets learning-react absorb the menu items into its own layout without overlap. Track Builder and CSRF Tester have no such controls, so `'host'` is fine for them.
-
-**postMessage protocol for `delegate` mode:**
-```
-// host → iframe (sent once after iframe 'load' event)
-{
-  type: 'MEFLY_MENU',
-  items: [
-    { id: string, label: string, iconUrl: string, url: string }
-  ]
-}
-```
-The embedded app is responsible for rendering a trigger + menu from this payload. Spec the receiver implementation in each embedded app separately when needed.
-
-**Details:**
-- Trigger (host mode): small fixed button, bottom-left, same shape/size as the GitHub link in AppLayout.tsx.
-- Menu state: open on hover (desktop) / click (mobile). Closes on outside click / Escape.
-- Menu content: icon + label list, generated from `src/apps.ts`, excluding the current app. Apply the same "not implemented yet" disabled/marked logic as AppIcon (defined in M1).
-- Menu is shown on all app pages. Not shown on the landing page (user is already there).
-- Add `menuMode: 'host' | 'delegate'` field to the app registry. Default: `'host'`.
-
-**Embedded app receiver (learning-react — out of scope for this milestone, tracked separately):**
-- Add a `window.addEventListener('message', ...)` handler that accepts `MEFLY_MENU` and renders the nav menu within the app's own layout, positioned to avoid existing bottom-left controls.
-
-**Files to create / modify:**
-- `src/apps.ts` — add `menuMode` field
-- `src/components/NavMenu.tsx` — React component (needs hover/open state)
-- `src/components/DelegateMenu.astro` — sends postMessage after iframe load; no visible UI on host
-- `src/layouts/AppEmbed.astro` — shared layout for app pages; renders `<NavMenu>` or `<DelegateMenu>` based on `menuMode`
-- `src/pages/apps/[id].astro` — switch to `AppEmbed` layout
+**Goal:** Build the `mefly-nav` standalone package (repo: `github.com/akhaisin/mefly-nav`) and wire it directly into mefly.dev. No intermediate local `NavMenu.tsx` — mefly.dev consumes the package from day one.
 
 ---
 
-## Milestone 4 — Articles
+### mefly-nav package
 
-**Goal:** A page listing published articles. Each article is a Markdown file with frontmatter.
-
-**Open design question — list vs cards:**
-- **List:** title + date + optional one-line description. Dense, fast to scan.
-- **Cards:** title + description + maybe a cover image. More visual weight, better for articles with distinct topics.
-
-**Recommendation:** start with a simple list. Add card layout only if articles have meaningfully different visual identities (cover images, tags worth filtering on).
-
-**Details:**
-- Articles live in `src/content/articles/` as `.md` files with frontmatter: `title`, `date`, `description` (optional), `draft` (optional boolean).
-- Draft articles are excluded from the list in production (`import.meta.env.PROD`).
-- Article detail page renders the markdown body with minimal prose styling.
-- Add "Articles" entry to `src/apps.ts` or a separate `src/nav.ts` that `NavMenu` also reads.
-
-**Files to create:**
-- `src/content/config.ts` — Astro content collection schema
-- `src/content/articles/*.md` — article files
-- `src/pages/articles/index.astro` — article list
-- `src/pages/articles/[slug].astro` — article detail
-- `src/components/ArticleList.astro`
-
----
-
-## Milestone 5 — mefly-nav Package
-
-**Goal:** A small React package that owns all host-communication concerns for embedded apps: navigation menu and URL hash sync. Apps add one dependency and get both. Single source of truth shared between mefly.dev and all embedded apps.
-
-**Repo:** `github.com/akhaisin/mefly-nav` — standalone repo, installable without publishing to npm:
+**Repo:** `github.com/akhaisin/mefly-nav` (local path: `/home/ak/projects/mefly-nav`), installable without publishing to npm:
 ```
 npm install github:akhaisin/mefly-nav
 ```
 Pin a specific release with: `github:akhaisin/mefly-nav#v1.0.0`
 
----
+**Components:**
 
-### URL sync
+`MeflyNav` — trigger + menu UI:
+```tsx
+// Host mode — mefly.dev renders this directly, passing items from src/apps.ts
+<MeflyNav items={items} activeId="track-builder" />
+```
 
-`useHostSync` — the hook currently living in `learning-react/src/hooks/useHostSync.ts`. Moves to this package verbatim. Embedded apps call it once; it handles both directions:
-- Route changes → sends `HASH_CHANGED` to host
-- Receives `NAVIGATE_TO_HASH` from host → updates `window.location.hash`
-
-Must be called inside a React Router `<Router>` (uses `useLocation`).
-
-**Host side (mefly.dev):** The existing `UrlSync.astro` component stays in mefly.dev — it is Astro-specific and contains no logic worth sharing. Only the embedded-app side moves to the package.
-
----
-
-### Navigation menu
+`MeflyNavReceiver` — delegate mode for embedded apps; inert until `MEFLY_MENU` arrives via postMessage:
+```tsx
+// Delegate mode — embedded app; inert until MEFLY_MENU arrives via postMessage
+<MeflyNavReceiver />
+```
 
 **Visual behaviour (inspired by react-tiny-fab):**
 - Small circular/rounded trigger button fixed at bottom-left.
@@ -177,15 +108,6 @@ Must be called inside a React Router `<Router>` (uses `useLocation`).
 - Items are standard anchors navigating to their mefly.dev URL.
 - Closes on outside click or Escape.
 - The current app's item is omitted or visually marked as active.
-
-**Component API:**
-```tsx
-// Host mode — mefly.dev renders this directly, passing items from src/apps.ts
-<MeflyNav items={items} activeId="track-builder" />
-
-// Delegate mode — embedded app; inert until MEFLY_MENU arrives via postMessage
-<MeflyNavReceiver />
-```
 
 **Item shape:**
 ```ts
@@ -204,10 +126,15 @@ type MeflyNavItem = {
 ```
 `MeflyNavReceiver` validates `event.origin` is a trusted mefly.dev origin, then renders `<MeflyNav>` with the received items.
 
----
+**`useHostSync`** — the hook currently living in `learning-react/src/hooks/useHostSync.ts`. Moves to this package verbatim. Embedded apps call it once; it handles both directions:
+- Route changes → sends `HASH_CHANGED` to host
+- Receives `NAVIGATE_TO_HASH` from host → updates `window.location.hash`
 
-### Package structure
+Must be called inside a React Router `<Router>` (uses `useLocation`).
 
+**Host side (mefly.dev):** The existing `UrlSync.astro` component stays in mefly.dev — it is Astro-specific and contains no logic worth sharing. Only the embedded-app side moves to the package.
+
+**Package structure:**
 ```
 mefly-nav/
   src/
@@ -230,14 +157,104 @@ mefly-nav/
 
 ---
 
-### Migration from current implementations
+### mefly.dev integration
 
-When M5 is ready:
-- **learning-react:** remove `src/hooks/useHostSync.ts`, install `mefly-nav`, update import. Add `<MeflyNavReceiver />` for delegate-mode menu.
-- **mefly.dev M2:** `UrlSync.astro` stays as-is (host side, Astro-specific).
-- **mefly.dev M3:** replace local `NavMenu.tsx` with `import { MeflyNav } from 'mefly-nav'`.
+**Design: configurable per-app menu ownership**
 
-**Milestones dependency:** M5 can be developed in parallel with M3. M3 starts with a local `NavMenu.tsx` and migrates once the package is ready.
+Two modes, selected per app via a `menuMode` field in `src/apps.ts`:
+
+| Mode | Value | Behaviour |
+|---|---|---|
+| **Host renders** | `'host'` | Host injects a fixed-position `<MeflyNav>` overlay on top of the iframe. Simple. May visually conflict with bottom-left controls already present in the embedded page. |
+| **Delegate to embedded page** | `'delegate'` | Host does NOT render a menu. After the iframe loads, host sends one postMessage with the full menu payload; the embedded app's `<MeflyNavReceiver>` renders its own trigger and menu. |
+
+**Why this matters:** `learning-react` already has a GitHub repo link and a help button at the bottom-left — exactly where the host menu trigger would land. `delegate` mode lets learning-react absorb the menu items into its own layout without overlap. Track Builder and CSRF Tester have no such controls, so `'host'` is fine for them.
+
+**Details:**
+- Trigger (host mode): small fixed button, bottom-left, same shape/size as the GitHub link in AppLayout.tsx.
+- Menu state: open on hover (desktop) / click (mobile). Closes on outside click / Escape.
+- Menu content: icon + label list, generated from `src/apps.ts`, excluding the current app. Apply the same "not implemented yet" disabled/marked logic as AppIcon (defined in M1).
+- Menu is shown on all app pages. Not shown on the landing page (user is already there).
+- Add `menuMode: 'host' | 'delegate'` field to the app registry. Default: `'host'`.
+
+**Embedded app migration (learning-react):**
+- Remove `src/hooks/useHostSync.ts`, install `mefly-nav`, update import.
+- Add `<MeflyNavReceiver />` for delegate-mode menu.
+
+**Files to create / modify in mefly.dev:**
+- `src/apps.ts` — add `menuMode` field
+- `src/components/DelegateMenu.astro` — sends postMessage after iframe load; no visible UI on host
+- `src/layouts/AppEmbed.astro` — shared layout for app pages; renders `<MeflyNav>` (from `mefly-nav`) or `<DelegateMenu>` based on `menuMode`
+- `src/pages/apps/[id].astro` — switch to `AppEmbed` layout
+
+---
+
+## Milestone 4 — Articles
+
+**Goal:** A page listing published articles. Each article is a Markdown file with frontmatter.
+
+**Open design question — list vs cards:**
+- **List:** title + date + optional one-line description. Dense, fast to scan.
+- **Cards:** title + description + maybe a cover image. More visual weight, better for articles with distinct topics.
+
+**Recommendation:** start with a simple list. Add card layout only if articles have meaningfully different visual identities (cover images, tags worth filtering on).
+
+**Details:**
+- Articles live in `src/content/articles/` as `.md` files with frontmatter: `title`, `date`, `description` (optional), `draft` (optional boolean).
+- Draft articles are excluded from the list in production (`import.meta.env.PROD`).
+- Article detail page renders the markdown body with minimal prose styling.
+- Add "Articles" entry to `src/apps.ts` or a separate `src/nav.ts` that `MeflyNav` also reads.
+
+**Files to create:**
+- `src/content/config.ts` — Astro content collection schema
+- `src/content/articles/*.md` — article files
+- `src/pages/articles/index.astro` — article list
+- `src/pages/articles/[slug].astro` — article detail
+- `src/components/ArticleList.astro`
+
+---
+
+## Milestone 5 — Remove Jekyll Remnants
+
+**Goal:** Delete the old Jekyll site source that still lives in this repo alongside the Astro build, leaving only the Astro project.
+
+**Details:**
+- Identify and remove Jekyll-specific files: `_config.yml`, `Gemfile`, `Gemfile.lock`, `_layouts/`, `_includes/`, `_posts/`, `_site/`, `assets/` (if only used by Jekyll), and any root-level `.html` / `.md` pages that belong to the Jekyll structure.
+- Keep files that have been ported into Astro (`src/`, `public/`, `astro.config.ts`, CI workflow).
+- Verify `pnpm build` still succeeds after removal.
+- Commit as a standalone cleanup commit so the diff is easy to review.
+
+---
+
+## Milestone 6 — Move Host-Side URL Sync to mefly-nav
+
+**Goal:** Extract the host-page `postMessage` orchestration from `UrlSync.astro` into the `mefly-nav` package so that any host (not just Astro) can reuse it without copy-pasting.
+
+**Background:** `UrlSync.astro` handles three concerns that are logically part of the `mefly-nav` protocol:
+- On iframe load, send `NAVIGATE_TO_HASH` with the current host hash.
+- On host `hashchange`, forward it to the iframe.
+- On `HASH_CHANGED` from the iframe, mirror the embedded app's pathname/hash to the host URL hash.
+- Fallback polling for same-origin / local-dev cases.
+
+**Proposed API — exported plain function (no React required):**
+```ts
+import { setupHostSync } from 'mefly-nav/host';
+
+// Call once after the iframe element is in the DOM.
+const cleanup = setupHostSync('app-iframe');
+// cleanup() removes all listeners if needed.
+```
+
+Options considered:
+- **Plain JS function `setupHostSync(iframeId)`** — framework-agnostic, minimal. Preferred.
+- **React component `<HostSync>`** — consistent with rest of library but carries React overhead for a script-level concern.
+- **Web component `<mefly-host-sync>`** — declarative but heavier.
+
+**Implementation notes:**
+- Add a separate library entry point `mefly-nav/host` (add to `exports` in `package.json`) that ships no React — just DOM/`postMessage` logic.
+- Move the `UrlSync.astro` inline script body into `src/setupHostSync.ts` in the mefly-nav repo, with `iframeId` as a parameter.
+- `UrlSync.astro` becomes a thin wrapper: `import { setupHostSync } from 'mefly-nav/host'; setupHostSync('app-iframe');`.
+- Bump mefly-nav minor version; update mefly.dev dependency.
 
 ---
 

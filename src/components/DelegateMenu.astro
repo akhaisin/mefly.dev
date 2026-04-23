@@ -1,0 +1,28 @@
+---
+import type { MeflyNavItem } from 'mefly-nav';
+
+interface Props {
+  activeId: string;
+  items: MeflyNavItem[];
+}
+
+const { activeId, items } = Astro.props;
+const payload = JSON.stringify({ type: 'MEFLY_MENU', activeId, items });
+---
+
+<script define:vars={{ payload }}>
+  const iframe = document.getElementById('app-iframe');
+  if (iframe) {
+    iframe.addEventListener('load', () => {
+      const msg = JSON.parse(payload);
+      iframe.contentWindow?.postMessage(msg, '*');
+    });
+
+    window.addEventListener('message', (event) => {
+      if (event.source !== iframe.contentWindow) return;
+      if (event.data?.type !== 'MEFLY_NAV_SELECT') return;
+      const url = event.data?.item?.url;
+      if (url) window.location.href = url;
+    });
+  }
+</script>

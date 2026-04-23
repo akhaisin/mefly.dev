@@ -13,7 +13,7 @@
       let ready = false;
       let lastPolledHash = '';
 
-      function sendHash(hash: string): void {
+      function sendToIframe(hash: string): void {
         if (!ready) return;
         iframe!.contentWindow?.postMessage(
           { type: 'NAVIGATE_TO_HASH', hash: hash.replace(/^#/, ''), timestamp: Date.now() },
@@ -23,21 +23,29 @@
 
       iframe.addEventListener('load', () => {
         ready = true;
-        if (window.location.hash) sendHash(window.location.hash);
+        if (window.location.hash) sendToIframe(window.location.hash);
       });
 
-      window.addEventListener('hashchange', () => sendHash(window.location.hash));
+      window.addEventListener('hashchange', () => sendToIframe(window.location.hash));
 
       window.addEventListener('message', (event) => {
         if (event.source !== iframe!.contentWindow) return;
         if (event.origin !== iframeOrigin) return;
         if (event.data?.type !== 'HASH_CHANGED') return;
 
-        const incoming: string = event.data.hash ?? '';
-        if (!incoming) return;
+        const hash: string = event.data.hash ?? '';
+        const pathname: string = event.data.pathname ?? '';
 
-        const next = incoming.startsWith('#') ? incoming : `#${incoming}`;
-        if (window.location.hash !== next) window.location.hash = next;
+        if (hash) {
+          // Hash fragment navigation — mirror it to the host URL hash.
+          const next = hash.startsWith('#') ? hash : `#${hash}`;
+          if (window.location.hash !== next) window.location.hash = next;
+        } else if (pathname && pathname !== '/') {
+          // Pathname navigation (e.g. React Router) — store as #/pathname so
+          // the URL is shareable and the correct route is restored on reload.
+          const next = `#${pathname}`;
+          if (window.location.hash !== next) window.location.hash = next;
+        }
       });
 
       // Fallback polling for same-origin / local dev where postMessage is not fired.
