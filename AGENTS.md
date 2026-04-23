@@ -2,7 +2,7 @@
 
 ## Overview
 
-Rebuild mefly.dev from Jekyll to Astro from scratch. New site structure is intentionally different from the old one — do not attempt to preserve the Jekyll layout system.
+This document tracks the mefly.dev rebuild from Jekyll to Astro and the follow-up milestones. The repository is now Astro-only, and milestone notes below are kept as implementation history.
 
 Stack: **Astro** (static output) + **React** (islands where interactivity is needed) + **TypeScript** + **Vite** (Astro uses Vite internally) + **pnpm** (package manager). Plain CSS modules for styling, no utility framework.
 
@@ -57,7 +57,7 @@ Stack: **Astro** (static output) + **React** (islands where interactivity is nee
 
 **Goal:** Keep the host page URL hash in sync with the embedded app's hash, so bookmarking and sharing the host URL preserves the embedded app's navigation state.
 
-**Protocol (already established in the current Jekyll site):**
+**Protocol (established in the legacy Jekyll site):**
 - **Host → iframe:** on load and on `hashchange`, send `postMessage({ type: 'NAVIGATE_TO_HASH', hash: '...' }, iframeOrigin)`.
 - **Iframe → host:** embedded app sends `postMessage({ type: 'HASH_CHANGED', hash: '...' })` when its hash changes; host updates `window.location.hash`.
 - **Fallback:** polling `iframe.contentWindow.location.hash` every 200 ms for same-origin / local dev cases where postMessage is not fired.
@@ -216,13 +216,17 @@ Two modes, selected per app via a `menuMode` field in `src/apps.ts`:
 
 ## Milestone 5 — Remove Jekyll Remnants
 
-**Goal:** Delete the old Jekyll site source that still lives in this repo alongside the Astro build, leaving only the Astro project.
+**Status:** Completed
+
+**Goal:** Delete the old Jekyll site source that lived in this repo alongside the Astro build, leaving only the Astro project.
 
 **Details:**
 - Identify and remove Jekyll-specific files: `_config.yml`, `Gemfile`, `Gemfile.lock`, `_layouts/`, `_includes/`, `_posts/`, `_site/`, `assets/` (if only used by Jekyll), and any root-level `.html` / `.md` pages that belong to the Jekyll structure.
 - Keep files that have been ported into Astro (`src/`, `public/`, `astro.config.ts`, CI workflow).
 - Verify `pnpm build` still succeeds after removal.
 - Commit as a standalone cleanup commit so the diff is easy to review.
+
+**Result:** Legacy Jekyll files and directories were removed; Astro build remains green.
 
 ---
 

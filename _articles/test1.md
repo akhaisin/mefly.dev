@@ -1,7 +1,0 @@
----
-layout: default
-title: Test1
----
-
-Placeholder article content.
-
