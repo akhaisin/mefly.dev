@@ -1,0 +1,11 @@
+{
+  "label": "Track Builder",
+  "description": "Draw Tinywhoop racing track layouts in compact PVC pipes style.",
+  "iconUrl": "https://akhaisin.github.io/track-builder/favicon.svg",
+  "iframeUrl": "https://akhaisin.github.io/track-builder/",
+  "iframeUrlLocal": "http://localhost:5173/track-builder/",
+  "devOnly": false,
+  "wip": true,
+  "urlSync": true,
+  "menuMode": "delegate"
+}

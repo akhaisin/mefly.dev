@@ -1,0 +1,9 @@
+{
+  "label": "Learning React",
+  "description": "Hands-on React exercises and experiments",
+  "iconUrl": "https://akhaisin.github.io/learning-react/favicon.svg",
+  "iframeUrl": "https://akhaisin.github.io/learning-react/",
+  "iframeUrlLocal": "http://localhost:5175/learning-react/",
+  "urlSync": true,
+  "menuMode": "delegate"
+}

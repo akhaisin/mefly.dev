@@ -1,0 +1,10 @@
+{
+  "label": "CRSF Tester",
+  "description": "Inspect and validate CRSF telemetry packets",
+  "iconUrl": "https://akhaisin.github.io/crsf-tester/favicon.svg",
+  "iframeUrl": "https://akhaisin.github.io/crsf-tester/",
+  "iframeUrlLocal": "http://localhost:5174/crsf-tester/",
+  "devOnly": false,
+  "wip": true,
+  "menuMode": "delegate"
+}

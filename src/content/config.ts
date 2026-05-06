@@ -10,6 +10,23 @@ const articles = defineCollection({
   }),
 });
 
+const apps = defineCollection({
+  type: 'data',
+  schema: z.object({
+    label: z.string(),
+    description: z.string().optional(),
+    iconUrl: z.string(),
+    href: z.string().optional(),
+    iframeUrl: z.string().optional(),
+    iframeUrlLocal: z.string().optional(),
+    devOnly: z.boolean().optional(),
+    wip: z.boolean().optional(),
+    urlSync: z.boolean().optional(),
+    menuMode: z.enum(['host', 'delegate']).optional(),
+  }),
+});
+
 export const collections = {
   articles,
+  apps,
 };

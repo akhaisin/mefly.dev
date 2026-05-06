@@ -14,7 +14,7 @@ const { app } = Astro.props;
 const isDev = import.meta.env.DEV;
 const iframeSrc = isDev ? (app.iframeUrlLocal ?? app.iframeUrl) : app.iframeUrl;
 const menuMode = app.menuMode ?? 'host';
-const navItems = navItemsFor(app.id, isDev);
+const navItems = await navItemsFor(app.id, Astro.url.origin);
 ---
 
 <!doctype html>

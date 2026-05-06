@@ -1,0 +1,9 @@
+{
+  "label": "Learning SQL",
+  "description": "Hands-on SQL exercises",
+  "iconUrl": "https://akhaisin.github.io/learning-sql/favicon.svg",
+  "iframeUrl": "https://akhaisin.github.io/learning-sql/",
+  "iframeUrlLocal": "http://localhost:5176/learning-sql/",
+  "urlSync": true,
+  "menuMode": "delegate"
+}

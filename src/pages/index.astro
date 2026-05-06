@@ -1,34 +1,28 @@
 ---
 import Base from '../layouts/Base.astro';
 import AppIcon from '../components/AppIcon.astro';
-import { apps } from '../apps';
+import { getApp, isDevOnly } from '../apps';
+
+const appOrder = [
+  'articles',
+  'track-builder',
+  'crsf-tester',
+  'learning-react',
+  'learning-sql',
+];
+
+const results = await Promise.all(appOrder.map(getApp));
+const visibleApps = results
+  .filter((app) => app !== undefined)
+  .filter((app) => !isDevOnly(app) || import.meta.env.DEV);
 ---
 
 <Base title="mefly.dev">
   <main>
     <div class="icon-row">
-      {apps.map((app) => (
+      {visibleApps.map((app) => (
         <AppIcon app={app} />
       ))}
     </div>
   </main>
 </Base>
-
-<style>
-  main {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #0f0f0f;
-  }
-
-  .icon-row {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 2rem;
-  }
-</style>

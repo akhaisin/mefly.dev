@@ -1,11 +1,15 @@
+import { getCollection, getEntry } from 'astro:content';
+
 export interface App {
   id: string;
   label: string;
+  description?: string;
   iconUrl: string;
   href?: string;
   iframeUrl?: string;
   iframeUrlLocal?: string;
   devOnly?: boolean;
+  wip?: boolean;
   urlSync?: boolean;
   menuMode?: 'host' | 'delegate';
 }
@@ -38,54 +42,24 @@ export function isEmbeddableApp(app: App): boolean {
   return Boolean(app.iframeUrl || app.iframeUrlLocal);
 }
 
-export const apps: App[] = [
-  {
-    id: 'articles',
-    label: 'Articles',
-    iconUrl: 'https://mefly.dev/favicon.svg',
-    href: '/articles',
-    devOnly: true,
-  },
-  {
-    id: 'track-builder',
-    label: 'Track Builder',
-    iconUrl: 'https://akhaisin.github.io/track-builder/favicon.svg',
-    iframeUrl: 'https://akhaisin.github.io/track-builder/',
-    iframeUrlLocal: 'http://localhost:5173/track-builder/',
-    urlSync: true,
-    devOnly: true,
-    menuMode: 'delegate',
-  },
-  {
-    id: 'crsf-tester',
-    label: 'CRSF Tester',
-    iconUrl: 'https://akhaisin.github.io/crsf-tester/favicon.svg',
-    iframeUrl: 'https://akhaisin.github.io/crsf-tester/',
-    iframeUrlLocal: 'http://localhost:5173/crsf-tester/',
-    devOnly: true,
-    menuMode: 'delegate',
-  },
-  {
-    id: 'learning-react',
-    label: 'Learning React',
-    iconUrl: 'https://akhaisin.github.io/learning-react/favicon.svg',
-    iframeUrl: 'https://akhaisin.github.io/learning-react/',
-    iframeUrlLocal: 'http://localhost:5175/learning-react/',
-    urlSync: true,
-    menuMode: 'delegate',
-  },
-];
-
-export function getApp(id: string): App | undefined {
-  return apps.find((a) => a.id === id);
+export async function getAllApps(): Promise<App[]> {
+  const entries = await getCollection('apps');
+  return entries.map((e) => ({ id: e.id, ...e.data }));
 }
 
-export function navItemsFor(currentId: string, isDev: boolean) {
+export async function getApp(id: string): Promise<App | undefined> {
+  const entry = await getEntry('apps', id);
+  return entry ? { id: entry.id, ...entry.data } : undefined;
+}
+
+export async function navItemsFor(currentId: string, origin: string) {
+  const apps = await getAllApps();
+  const isDev = import.meta.env.DEV;
   const homeItem = {
     id: 'home',
     label: 'Home',
-    iconUrl: 'https://mefly.dev/favicon.svg',
-    url: isDev ? 'http://localhost:4321' : 'https://mefly.dev',
+    iconUrl: `${origin}/favicon.svg`,
+    url: origin,
   };
 
   return [

@@ -1,0 +1,8 @@
+{
+  "label": "Articles",
+  "description": "Thoughts and write-ups on things I build",
+  "iconUrl": "https://mefly.dev/favicon.svg",
+  "href": "/articles",
+  "devOnly": true,
+  "wip": true
+}

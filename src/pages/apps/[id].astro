@@ -1,9 +1,10 @@
 ---
-import { apps, isEmbeddableApp } from '../../apps';
+import { getAllApps, isEmbeddableApp } from '../../apps';
 import type { App } from '../../apps';
 import AppEmbed from '../../layouts/AppEmbed.astro';
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const apps = await getAllApps();
   return apps.filter(isEmbeddableApp).map((app) => ({
     params: { id: app.id },
     props: { app },
