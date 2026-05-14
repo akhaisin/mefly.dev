@@ -1,0 +1,11 @@
+{
+  "label": "Backyard Flyer",
+  "description": "Learn quadcopter control through live simulation coding",
+  "iconUrl": "https://akhaisin.github.io/backyard-flyer/favicon.svg",
+  "iframeUrl": "https://akhaisin.github.io/backyard-flyer/",
+  "iframeUrlLocal": "http://localhost:4321/backyard-flyer/",
+  "urlSync": true,
+  "devOnly": false,
+  "wip": true,
+  "menuMode": "delegate"
+}

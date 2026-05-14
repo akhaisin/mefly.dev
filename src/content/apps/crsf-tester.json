@@ -4,7 +4,7 @@
   "iconUrl": "https://akhaisin.github.io/crsf-tester/favicon.svg",
   "iframeUrl": "https://akhaisin.github.io/crsf-tester/",
   "iframeUrlLocal": "http://localhost:5174/crsf-tester/",
-  "devOnly": false,
+  "devOnly": true,
   "wip": true,
   "menuMode": "delegate"
 }

@@ -270,3 +270,7 @@ Options considered:
 - **CSS:** plain CSS modules per component. No utility framework.
 - **Deployment:** GitHub Pages via GitHub Actions (see M1 workflow). Add a `CNAME` file containing `mefly.dev` to the repo root so GitHub Pages preserves the custom domain after each deploy.
 - **Astro config:** `output: 'static'`, `site: 'https://mefly.dev'`.
+
+## TODO
+
+- move mefly-nav to myfly.dev/packages and update all clients
