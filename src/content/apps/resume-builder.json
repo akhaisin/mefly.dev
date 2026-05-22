@@ -1,0 +1,8 @@
+{
+  "label": "Resume Builder",
+  "description": "Edit a JSON Resume document and render it live with Typst.",
+  "iconUrl": "https://akhaisin.github.io/resume-builder/favicon.svg",
+  "iframeUrl": "https://akhaisin.github.io/resume-builder/",
+  "iframeUrlLocal": "http://localhost:5177/resume-builder/",
+  "menuMode": "delegate"
+}
