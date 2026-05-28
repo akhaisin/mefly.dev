@@ -12,6 +12,10 @@ export interface App {
   wip?: boolean;
   urlSync?: boolean;
   menuMode?: 'host' | 'delegate';
+  ogDescription?: string;
+  ogImage?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
 }
 
 export function resolveIframeSrc(app: App, isDev: boolean): string | undefined {

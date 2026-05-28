@@ -7,5 +7,9 @@
   "urlSync": true,
   "devOnly": false,
   "wip": true,
-  "menuMode": "delegate"
+  "menuMode": "delegate",
+  "ogDescription": "Interactive drone flight simulator and learning platform.",
+  "ogImage": "https://www.mefly.dev/apps/backyard-flyer/preview.png",
+  "ogImageWidth": 1200,
+  "ogImageHeight": 630
 }

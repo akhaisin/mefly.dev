@@ -23,6 +23,10 @@ const apps = defineCollection({
     wip: z.boolean().optional(),
     urlSync: z.boolean().optional(),
     menuMode: z.enum(['host', 'delegate']).optional(),
+    ogDescription: z.string().optional(),
+    ogImage: z.string().optional(),
+    ogImageWidth: z.number().optional(),
+    ogImageHeight: z.number().optional(),
   }),
 });
 
