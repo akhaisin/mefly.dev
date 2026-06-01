@@ -72,12 +72,16 @@ export async function navItemsFor(currentId: string, origin: string) {
       .filter((a) => a.id !== currentId)
       .map((a) => {
         const href = resolveAppHref(a, isDev);
+        // Absolutize against the host origin. The menu may be rendered inside a
+        // cross-origin iframe (delegate mode), where a relative href would
+        // resolve against the iframe's origin instead of the host's.
+        const url = href ? new URL(href, origin).href : '#';
 
         return {
           id: a.id,
           label: a.label,
           iconUrl: a.iconUrl,
-          url: href ?? '#',
+          url,
           disabled: !href,
           devOnly: isDevOnly(a),
         };

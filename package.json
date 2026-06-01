@@ -4,13 +4,13 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "pnpm --filter mefly-nav build && astro build",
     "preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/react": "^4.0.0",
     "astro": "^5.0.0",
-    "mefly-nav": "github:akhaisin/mefly-nav#v0.1.2",
+    "mefly-nav": "workspace:*",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },
