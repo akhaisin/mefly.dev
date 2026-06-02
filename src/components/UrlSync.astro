@@ -1,15 +1,18 @@
 <script>
   const iframe = document.getElementById('app-iframe') as HTMLIFrameElement | null;
   if (iframe) {
+    const baseSrc = iframe.dataset.src ?? iframe.src;
     const iframeOrigin = (() => {
       try {
-        return new URL(iframe.src, window.location.origin).origin;
+        return new URL(baseSrc, window.location.origin).origin;
       } catch {
         return null;
       }
     })();
 
     if (iframeOrigin) {
+      iframe.src = window.location.hash ? baseSrc + window.location.hash : baseSrc;
+
       let ready = false;
       let lastPolledHash = '';
 

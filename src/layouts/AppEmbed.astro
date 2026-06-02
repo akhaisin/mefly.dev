@@ -39,7 +39,7 @@ const navItems = await navItemsFor(app.id, Astro.url.origin);
   </head>
   <body>
     {iframeSrc
-      ? <iframe id="app-iframe" src={iframeSrc} title={app.label} allowfullscreen></iframe>
+      ? <iframe id="app-iframe" {...(app.urlSync ? { 'data-src': iframeSrc } : { src: iframeSrc })} title={app.label} allowfullscreen></iframe>
       : <p class="not-implemented">Not implemented yet</p>
     }
     {iframeSrc && app.urlSync && <UrlSync />}
