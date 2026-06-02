@@ -22,7 +22,7 @@ const navItems = await navItemsFor(app.id, Astro.url.origin);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={app.iconUrl} />
     <title>{app.label} — mefly.dev</title>
     {app.description && <meta name="description" content={app.ogDescription ?? app.description} />}
     <meta property="og:title" content={`${app.label} — mefly.dev`} />

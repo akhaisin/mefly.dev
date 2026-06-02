@@ -69,7 +69,7 @@ export async function navItemsFor(currentId: string, origin: string) {
   return [
     homeItem,
     ...apps
-      .filter((a) => a.id !== currentId)
+      .filter((a) => a.id !== currentId && (isDev || !isDevOnly(a)))
       .map((a) => {
         const href = resolveAppHref(a, isDev);
         // Absolutize against the host origin. The menu may be rendered inside a
