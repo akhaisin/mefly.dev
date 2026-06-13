@@ -4,7 +4,7 @@
   "iconUrl": "https://akhaisin.github.io/track-builder/favicon.svg",
   "iframeUrl": "https://akhaisin.github.io/track-builder/",
   "iframeUrlLocal": "http://localhost:5173/track-builder/",
-  "devOnly": true,
+  "devOnly": false,
   "wip": true,
   "urlSync": true,
   "menuMode": "delegate"
